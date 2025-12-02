@@ -1,0 +1,33 @@
+{
+	"port": 8082,
+	"timeout": 60000,
+	"session": {
+		"secret": "kfcfkxqsvw50",
+		"name": "sessionName",
+		"resave": false,
+		"saveUninitialized": true,
+		"cookie": {
+			"maxAge": 86400000,
+			"secure": false
+		}
+	},
+	"accessOrigin": "http://127.0.0.1:8080",
+	"user": "admin",
+	"pwd": "admin",
+	"defaultSkip": "",
+	"limiter": {
+		"windowMs": "1000",
+		"max": "3",
+		"message": "请求过于频繁，请稍后再试",
+		"statusCode": "429"
+	},
+	"blacklist": [
+		"missav.com",
+		"twitter.com",
+		"youtube.com",
+		"x.com",
+		"facebook.com",
+		"tiktok.com",
+		"pornhub.com"
+	]
+}
