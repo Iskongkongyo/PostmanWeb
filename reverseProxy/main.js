@@ -29,7 +29,7 @@ tools.ipv6.then(ip => ipv6 = ip).catch(() => {});
 // ---------------------------
 function loadConfigSafe() {
 	try {
-		const raw = fs.readFileSync("./test.json", "utf8");
+		const raw = fs.readFileSync("./main.json", "utf8");
 		const conf = JSON.parse(raw);
 
 		return {
@@ -66,7 +66,7 @@ function loadConfigSafe() {
 let config = loadConfigSafe();
 
 // 自动热更新配置
-chokidar.watch("./test.json").on("change", () => {
+chokidar.watch("./main.json").on("change", () => {
 	console.log("配置文件变更，重新加载...");
 	config = loadConfigSafe();
 });
@@ -173,7 +173,9 @@ app.all("/*", async (req, res) => {
 
 		if (!reqUrl) {
 			if (config.defaultSkip) return res.redirect(config.defaultSkip);
-			return res.status(400).send("缺少 url 参数");
+			return res.status(400).send(
+					'<h2></h2><script>let second = 3;let listener = setInterval(()=>{ document.querySelector("h2").innerText = `会话中并未发现URL参数，${second}秒后自动跳转首页！`; if(second <= 0){clearInterval(listener);location.href="/web/index.html";}else{--second;}},1000);</script>'
+				);
 		}
 
 		if (!isValidUrl(reqUrl))
@@ -191,18 +193,8 @@ app.all("/*", async (req, res) => {
 
 		const baseUrl = req.session.url || '';
 
-		if (!baseUrl) {
-			if (config.defaultSkip) {
-				return res.redirect(config.defaultSkip);
-			} else {
-				return res.status(400).send(
-					'<h2></h2><script>let second = 3;let listener = setInterval(()=>{ document.querySelector("h2").innerText = `会话中并未发现URL参数，${second}秒后自动跳转首页！`; if(second <= 0){clearInterval(listener);location.href="/web/index.html";}else{--second;}},1000);</script>'
-				);
-			}
-		}
-
 		// 拼接 URL + path
-		const fullUrl = getTargetUrl(baseUrl, req.path);
+		const fullUrl = getTargetUrl(baseUrl, req.originalUrl);
 		console.log(`[Proxy] ${req.ip} =>${req.method} ${fullUrl}`);
 
 		// -----------------------
